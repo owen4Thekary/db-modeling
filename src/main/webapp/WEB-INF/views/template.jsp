@@ -13,11 +13,11 @@
 <body>
 
     <div class="container">
-        <h2>MVC Framework</h2>
+        <h2>생각하는 데이터베이스 모델링</h2>
         <div class="card">
-            <div class="card-header">Header</div>
+            <div class="card-header">Online Shopping</div>
             <div class="card-body">Content</div>
-            <div class="card-footer">패스트캠퍼스_BE7_박매일</div>
+            <div class="card-footer">[7일 완성]생각하는 데이터베이스 모델링_박매일</div>
         </div>
     </div>
 

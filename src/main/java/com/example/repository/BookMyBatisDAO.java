@@ -1,6 +1,5 @@
 package com.example.repository;
 
-import com.example.entity.BookDTO;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -21,20 +20,6 @@ public class BookMyBatisDAO { // MyBatis API
                e.printStackTrace();
            }
       }
-      // CRUD Method
-      public List<BookDTO> bookList(){
-          SqlSession session=sqlSessionFactory.openSession();
-          // select * from booktbl order by title desc
-          List<BookDTO> list=session.selectList("bookList");
-          session.close(); // 반납
-          return list;
-      }
-    public int bookInsert(BookDTO book) {
-         SqlSession session=sqlSessionFactory.openSession();
-         // insert into booktbl(title, price, name, page) values(?, ?, ?, ?)
-         int cnt=session.insert("bookInsert", book ) ;
-         session.commit(); // 완료명령
-         session.close(); // 반납
-          return cnt;
-    }
+
+
 }
