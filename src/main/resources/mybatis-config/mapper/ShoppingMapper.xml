@@ -2,8 +2,110 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="mybatis-config.mapper.ShoppingMapper">
+<mapper namespace="com.example.entity.Product">
+	<select id="productList" resultType="com.example.entity.Product">
+		SELECT * FROM product order by product_num asc
+	</select>
+
+	<select id="productDetail" parameterType="int" resultType="com.example.entity.Product">
+		SELECT * FROM product where product_num = #{product_num}
+	</select>
 
 
+	<select id="regionList" resultType="com.example.entity.Region">
+		SELECT * FROM region
+	</select>
 
+	<select id="customer" parameterType="com.example.entity.Customer" resultType="com.example.entity.Customer">
+		select * from customer
+		where customer_id = #{customer_id}
+	</select>
+
+	<select id="customer_login" parameterType="com.example.entity.Customer"
+	resultType="com.example.entity.Customer">
+		select * from customer
+		where customer_id = #{customer_id} and password = #{password}
+	</select>
+
+	<insert id="registerCustomer" parameterType="com.example.entity.Customer">
+		INSERT INTO customer (customer_id, password, name, grade, region_code, email, reserves)
+		VALUES (#{customer_id}, #{password}, #{name}, #{grade}, #{region_code}, #{email}, #{reserves})
+	</insert>
+
+
+	<insert id="cartAdd" parameterType="com.example.entity.CusPro">
+		insert into `order` (customer_id, product_num, quantity, order_date, update_date)
+		values (#{customer_id}, #{product_num}, 1, NOW(), NOW());
+	</insert>
+
+	<select id="cartList" parameterType="string" resultType="com.example.entity.CusProProduct">
+		select o.order_num, o.product_num, p.name, o.quantity, p.price, (o.quantity*p.price) amount, (0.01*p.rate*o.quantity*p.price) point
+		from `order` o
+		inner join product p
+		on o.product_num = p.product_num
+		where o.customer_id = #{customer_id}
+	</select>
+
+	<select id="checkAdd" parameterType="com.example.entity.CusPro" resultType="com.example.entity.CusPro">
+		select * from `order`
+		where customer_id = #{customer_id} and product_num = #{product_num}
+	</select>
+
+	<update id="cartUpdate" parameterType="com.example.entity.CusPro">
+		update `order`
+		set quantity = quantity + 1
+		where customer_id = #{customer_id} and product_num = #{product_num}
+	</update>
+
+	<select id="totalAmount" parameterType="string" resultType="int">
+		select sum(o.quantity*p.price) total
+		from (select * from `order` o
+			where o.customer_id = #{customer_id}) o
+		inner join product p
+		on o.product_num = p.product_num
+	</select>
+
+	<!--delete 쿼리는 영향을 받은 행의 수를 기본적으로 반환한다-->
+	<delete id="cartCancel" parameterType="int">
+		delete from `order`
+		where order_num = #{order_num}
+	</delete>
+
+	<delete id="cartOrder" parameterType="String">
+		delete from `order`
+		where customer_id = #{customer_id}
+	</delete>
+
+	<update id="pointSave" parameterType="com.example.entity.Customer">
+		update customer
+		set reserves = reserves + #{reserves}
+		where customer_id = #{customer_id}
+	</update>
+
+	<update id="updateStock" parameterType="String">
+		UPDATE product p
+		JOIN (
+		SELECT product_num, SUM(quantity) AS total_quantity
+		FROM `order`
+		WHERE customer_id = #{customer_id}
+		GROUP BY product_num
+		) o ON p.product_num = o.product_num
+		SET p.stock = p.stock - o.total_quantity
+		WHERE p.product_num IN (
+		SELECT product_num
+		FROM `order`
+		WHERE customer_id = #{customer_id}
+		)
+	</update>
+
+	<update id="updateQuantity" parameterType="com.example.entity.CusPro">
+		update `order`
+		set quantity = #{quantity}
+		where order_num = #{order_num}
+	</update>
+
+	<insert id="payment" parameterType="com.example.entity.Payment">
+		insert into payment (customer_id, total_price, discount, actual_price)
+		values (#{customer_id}, #{total_price}, #{discount}, #{actual_price})
+	</insert>
 </mapper>

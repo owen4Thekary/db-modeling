@@ -10,9 +10,10 @@ import java.util.Date;
 @NoArgsConstructor
 
 public class CusPro {
-    private int order_number;
-    private String customer_id;
-    private int product_number;
+    private int order_num;
     private int quantity;
     private Date order_date;
+    private Date update_date;
+    private String customer_id;
+    private int product_num;
 }
